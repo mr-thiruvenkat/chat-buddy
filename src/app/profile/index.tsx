@@ -14,9 +14,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ProfileAvatarPicker } from "@/app/components/ProfileAvatarPicker";
-import { SettingRow } from "@/app/components/SettingRow";
-import { UsernameInputField } from "@/app/components/UsernameInputField";
+import ProfileAvatarPicker from "@/app/components/ProfileAvatarPicker";
+import SettingRow from "@/app/components/SettingRow";
+import UsernameInputField from "@/app/components/UsernameInputField";
 import { useProfileStore } from "@/store/profile-store";
 import { colors } from "@/theme/tokens";
 import { useStyles } from "@/theme/useStyles";

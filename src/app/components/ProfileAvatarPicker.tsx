@@ -12,7 +12,7 @@ type ProfileAvatarPickerProps = {
   styles: AppStyles;
 };
 
-export function ProfileAvatarPicker({
+export default function ProfileAvatarPicker({
   uri,
   username,
   onPress,

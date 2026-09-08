@@ -20,7 +20,7 @@ type AvatarProps = {
   onlineStyle?: StyleProp<ViewStyle>;
 };
 
-export function Avatar({
+export default function Avatar({
   initials,
   color,
   uri,

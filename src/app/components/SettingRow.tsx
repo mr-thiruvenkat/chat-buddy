@@ -11,7 +11,7 @@ type SettingRowProps = {
   children: ReactNode;
 };
 
-export function SettingRow({ label, subtitle, isDark, styles, children }: SettingRowProps) {
+export default function SettingRow({ label, subtitle, isDark, styles, children }: SettingRowProps) {
   return (
     <View style={[styles.settingRow, isDark && styles.darkSettingRow]}>
       <View style={styles.settingCopy}>

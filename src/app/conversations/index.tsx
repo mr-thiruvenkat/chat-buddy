@@ -11,12 +11,13 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Avatar } from "@/app/components/Avatar";
-import { ConversationListItem } from "@/app/components/ConversationListItem";
 import { useConversationStore } from "@/store/conversation-store";
 import { useProfileStore } from "@/store/profile-store";
 import { colors, icons, spacing } from "@/theme/tokens";
 import { useStyles } from "@/theme/useStyles";
+import Avatar from "../components/Avatar";
+import ConversationListItem from "../components/ConversationListItem";
+
 
 export default function Home() {
   const insets = useSafeAreaInsets();

@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 
-import { Avatar } from "@/app/components/Avatar";
 import { Conversation } from "@/shared/mockdata/conversations";
+import Avatar from "./Avatar";
 
 type AppStyles = typeof import("@/theme/styles").styles;
 
@@ -12,7 +12,7 @@ type ConversationListItemProps = {
   onPress: () => void;
 };
 
-export function ConversationListItem({
+export default function ConversationListItem({
   item,
   isDark,
   styles,

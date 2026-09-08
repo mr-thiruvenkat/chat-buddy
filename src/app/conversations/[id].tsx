@@ -109,10 +109,10 @@ export default function ConversationScreen() {
         <FlatList
           ref={listRef}
           data={messages}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item: any) => item.id}
           contentContainerStyle={[styles.messageList, messages.length === 0 && styles.emptyList]}
           onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
-          renderItem={({ item, index }) => {
+          renderItem={({ item, index }: { item: Message; index: number }) => {
             const previous = messages[index - 1];
             const grouped = previous?.sender === item.sender;
             return (

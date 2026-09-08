@@ -12,7 +12,7 @@ type UsernameInputFieldProps = {
   styles: AppStyles;
 };
 
-export function UsernameInputField({
+export default function UsernameInputField({
   value,
   onChangeText,
   error,
