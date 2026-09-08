@@ -1,15 +1,12 @@
 {
   "expo": {
-    "name": "chat-buddy",
+    "name": "Chat Buddy",
     "slug": "chat-buddy",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/bubble.png",
     "scheme": "chatbuddy",
     "userInterfaceStyle": "automatic",
-    "ios": {
-      "icon": "./assets/expo.icon"
-    },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -17,7 +14,9 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "package": "com.dreamercreations.chatbuddy"
     },
     "web": {
       "output": "static",
@@ -25,6 +24,13 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Chat Buddy to use your photos for your profile picture."
+        }
+      ],
+      "expo-notifications",
       [
         "expo-splash-screen",
         {
@@ -37,6 +43,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a35bfcf3-096d-4bb5-a380-aa1a79c76181"
+      }
     }
   }
 }
