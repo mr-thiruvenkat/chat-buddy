@@ -1,4 +1,3 @@
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -12,6 +11,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Avatar } from "@/app/components/Avatar";
+import { ConversationListItem } from "@/app/components/ConversationListItem";
 import { useConversationStore } from "@/store/conversation-store";
 import { useProfileStore } from "@/store/profile-store";
 import { colors, icons, spacing } from "@/theme/tokens";
@@ -81,13 +82,15 @@ export default function Home() {
           accessibilityLabel="Open profile"
           onPress={() => router.push("/profile" as never)}
         >
-          {avatarUri ? (
-            <Image source={{ uri: avatarUri }} contentFit="cover" style={styles.profileAvatar} />
-          ) : (
-            <View style={styles.profileAvatar}>
-              <Text style={styles.profileInitial}>{username[0] || "A"}</Text>
-            </View>
-          )}
+          <Avatar
+            initials={username[0] || "A"}
+            color={colors.textStrong}
+            uri={avatarUri}
+            size={40}
+            containerStyle={styles.profileAvatar}
+            imageStyle={styles.profileAvatar}
+            textStyle={styles.profileInitial}
+          />
         </Pressable>
       </View>
 
@@ -138,49 +141,15 @@ export default function Home() {
             />
           }
           renderItem={({ item }) => (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`Open chat with ${item.name}`}
+            <ConversationListItem
+              item={item}
+              isDark={isDarkMode}
+              styles={styles}
               onPress={() => {
                 markAsRead(item.id);
                 router.push(`/conversations/${item.id}` as never);
               }}
-              style={({ pressed }) => [styles.conversation, pressed && styles.conversationPressed]}
-            >
-              <View style={[styles.avatar, { backgroundColor: item.color }]}>
-                <Text style={styles.avatarText}>{item.initials}</Text>
-                {item.online ? <View style={styles.onlineDot} /> : null}
-              </View>
-              <View style={styles.conversationBody}>
-                <View style={styles.rowBetween}>
-                  <Text
-                    style={[
-                      styles.name,
-                      isDarkMode && styles.darkText,
-                      item.unread > 0 && styles.unreadName,
-                    ]}
-                  >
-                    {item.name}
-                  </Text>
-                  <Text style={[styles.timestamp, item.unread > 0 && styles.unreadTimestamp]}>
-                    {item.timestamp}
-                  </Text>
-                </View>
-                <View style={styles.rowBetween}>
-                  <Text
-                    numberOfLines={1}
-                    style={[styles.preview, item.unread > 0 && styles.unreadPreview]}
-                  >
-                    {item.preview}
-                  </Text>
-                  {item.unread > 0 ? (
-                    <View style={styles.unreadBadge}>
-                      <Text style={styles.unreadText}>{item.unread}</Text>
-                    </View>
-                  ) : null}
-                </View>
-              </View>
-            </Pressable>
+            />
           )}
           ListEmptyComponent={
             <View style={styles.stateBox}>

@@ -1,5 +1,4 @@
 import Constants, { AppOwnership } from "expo-constants";
-import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import type { RelativePathString } from "expo-router";
@@ -11,13 +10,15 @@ import {
   Pressable,
   Switch,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { ProfileAvatarPicker } from "@/app/components/ProfileAvatarPicker";
+import { SettingRow } from "@/app/components/SettingRow";
+import { UsernameInputField } from "@/app/components/UsernameInputField";
 import { useProfileStore } from "@/store/profile-store";
-import { colors, icons } from "@/theme/tokens";
+import { colors } from "@/theme/tokens";
 import { useStyles } from "@/theme/useStyles";
 
 const usernamePattern = /^[a-zA-Z0-9._-]+$/;
@@ -142,14 +143,6 @@ export default function ProfileScreen() {
 
   const themeMode = useProfileStore((state) => state.themeMode);
 
-  const initials =
-    draftUsername
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() || "A";
-
   if (!hasHydrated) {
     return <View style={[styles.screen, { paddingTop: insets.top }]} />;
   }
@@ -184,66 +177,37 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.content}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Choose profile picture"
+        <ProfileAvatarPicker
+          uri={draftAvatarUri}
+          username={draftUsername}
           onPress={() => void chooseAvatar()}
-          style={styles.avatarButton}
-        >
-          {draftAvatarUri ? (
-            <Image source={{ uri: draftAvatarUri }} contentFit="cover" style={styles.avatarImage} />
-          ) : (
-            <View style={styles.avatarFallback}>
-              <Text style={styles.avatarInitials}>{initials}</Text>
-            </View>
-          )}
-          <View style={styles.cameraBadge}>
-            <Text style={styles.cameraIcon}>{icons.add}</Text>
-          </View>
-        </Pressable>
+          styles={styles}
+        />
 
         {isOnboarding ? (
           <Text style={styles.intro}>Choose a username so friends know it&apos;s you.</Text>
         ) : null}
 
-        <View style={styles.fieldGroup}>
-          <Text style={styles.label}>USERNAME</Text>
-          <View
-            style={[styles.inputWrap, isDarkMode && styles.darkInput, error && styles.inputError]}
-          >
-            <Text style={styles.atSign}>@</Text>
-            <TextInput
-              accessibilityLabel="Username"
-              autoCapitalize="none"
-              autoCorrect={false}
-              maxLength={24}
-              onChangeText={(value) => {
-                setDraftUsername(value);
-                setError(null);
-              }}
-              placeholder="your username"
-              placeholderTextColor={colors.textFaint}
-              style={styles.input}
-              value={draftUsername}
-            />
-          </View>
-          {error ? (
-            <Text style={styles.errorText}>{error}</Text>
-          ) : (
-            <Text style={styles.helper}>This is how friends will find you.</Text>
-          )}
-        </View>
+        <UsernameInputField
+          value={draftUsername}
+          onChangeText={(value) => {
+            setDraftUsername(value);
+            setError(null);
+          }}
+          error={error}
+          isDark={isDarkMode}
+          styles={styles}
+        />
 
         {!isOnboarding ? (
           <View style={styles.settingsSection}>
             <Text style={styles.label}>PREFERENCES</Text>
-            <View style={[styles.settingRow, isDarkMode && styles.darkSettingRow]}>
-              <View style={styles.settingCopy}>
-                <Text style={[styles.settingTitle, isDarkMode && styles.darkText]}>Appearance</Text>
-                <Text style={styles.settingSubtitle}>
-                  {isDarkMode ? "Dark mode" : "Light mode"}
-                </Text>
-              </View>
+            <SettingRow
+              label="Appearance"
+              subtitle={isDarkMode ? "Dark mode" : "Light mode"}
+              isDark={isDarkMode}
+              styles={styles}
+            >
               <View style={styles.modeToggle}>
                 <Pressable
                   accessibilityRole="button"
@@ -266,16 +230,13 @@ export default function ProfileScreen() {
                   </Text>
                 </Pressable>
               </View>
-            </View>
-            <View style={[styles.settingRow, isDarkMode && styles.darkSettingRow]}>
-              <View style={styles.settingCopy}>
-                <Text style={[styles.settingTitle, isDarkMode && styles.darkText]}>
-                  Notifications
-                </Text>
-                <Text style={styles.settingSubtitle}>
-                  {notificationsEnabled ? "Allowed" : "Not allowed"}
-                </Text>
-              </View>
+            </SettingRow>
+            <SettingRow
+              label="Notifications"
+              subtitle={notificationsEnabled ? "Allowed" : "Not allowed"}
+              isDark={isDarkMode}
+              styles={styles}
+            >
               <Switch
                 accessibilityLabel="Allow notifications"
                 onValueChange={(value) => void toggleNotifications(value)}
@@ -283,7 +244,7 @@ export default function ProfileScreen() {
                 thumbColor={notificationsEnabled ? colors.primary : colors.white}
                 value={notificationsEnabled}
               />
-            </View>
+            </SettingRow>
           </View>
         ) : null}
       </View>
