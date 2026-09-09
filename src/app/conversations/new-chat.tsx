@@ -1,24 +1,41 @@
 import { router } from "expo-router";
-import { useMemo, useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
+import { useMemo, useRef, useState } from "react";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { initialConversations } from "@/shared/mockdata/conversations";
+import { developmentUsername, initialConversations } from "@/shared/mockdata/conversations";
 import { useConversationStore } from "@/store/conversation-store";
-import { colors, icons } from "@/theme/tokens";
+import { colors } from "@/theme/tokens";
 import { useStyles } from "@/theme/useStyles";
+import Avatar from "../components/Avatar";
+import Icon from "@/shared/components/Icon";
 
 export default function NewChatScreen() {
   const insets = useSafeAreaInsets();
   const { styles, isDark: isDarkMode } = useStyles();
   const [username, setUsername] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const contentScrollRef = useRef<ScrollView>(null);
   const addConversation = useConversationStore((state) => state.addConversation);
   const conversations = useConversationStore((state) => state.conversations);
 
   const normalizedUsername = username.trim().replace(/^@/, "").toLowerCase();
   const match = useMemo(
-    () => initialConversations.find((conversation) => conversation.username === normalizedUsername),
+    () =>
+      initialConversations.find(
+        (conversation) =>
+          conversation.username === developmentUsername &&
+          conversation.username === normalizedUsername,
+      ),
     [normalizedUsername],
   );
   const alreadyAdded = match
@@ -26,6 +43,7 @@ export default function NewChatScreen() {
     : false;
 
   function findUser() {
+    Keyboard.dismiss();
     setHasSearched(true);
   }
 
@@ -50,13 +68,17 @@ export default function NewChatScreen() {
           onPress={() => router.back()}
           style={styles.backButton}
         >
-          <Text style={styles.backIcon}>{icons.back}</Text>
+          <Icon name="arrow-back" size={24} color={colors.textStrong} />
         </Pressable>
         <Text style={[styles.headerTitle, isDarkMode && styles.darkText]}>New chat</Text>
         <View style={styles.headerSide} />
       </View>
 
-      <View style={styles.content}>
+      <ScrollView
+        ref={contentScrollRef}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.eyebrow}>START A CONVERSATION</Text>
         <Text style={[styles.title, isDarkMode && styles.darkText]}>
           Who would you like to message?
@@ -73,6 +95,11 @@ export default function NewChatScreen() {
             onChangeText={(value) => {
               setUsername(value);
               setHasSearched(false);
+            }}
+            onFocus={() => {
+              requestAnimationFrame(() =>
+                contentScrollRef.current?.scrollTo({ y: 150, animated: true }),
+              );
             }}
             onSubmitEditing={findUser}
             placeholder="username"
@@ -100,9 +127,7 @@ export default function NewChatScreen() {
               onPress={openConversation}
               style={styles.resultCard}
             >
-              <View style={[styles.avatar, { backgroundColor: match.color }]}>
-                <Text style={styles.avatarText}>{match.initials}</Text>
-              </View>
+              <Avatar size={54} uri={match.avatarUri} />
               <View style={styles.resultInfo}>
                 <Text style={styles.resultName}>{match.name}</Text>
                 <Text style={styles.resultUsername}>@{match.username}</Text>
@@ -116,7 +141,7 @@ export default function NewChatScreen() {
             </View>
           )
         ) : null}
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }

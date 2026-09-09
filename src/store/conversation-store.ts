@@ -13,6 +13,8 @@ type ConversationState = {
   markAsRead: (id: string) => void;
   updatePreview: (id: string, preview: string) => void;
   addConversation: (conversation: Conversation) => void;
+  clearConversations: () => void;
+  removeConversation: (id: string) => void;
 };
 
 export const useConversationStore = create<ConversationState>()(
@@ -40,6 +42,11 @@ export const useConversationStore = create<ConversationState>()(
           conversations: state.conversations.some((item) => item.id === conversation.id)
             ? state.conversations
             : [conversation, ...state.conversations],
+        })),
+      clearConversations: () => set({ conversations: [] }),
+      removeConversation: (id) =>
+        set((state) => ({
+          conversations: state.conversations.filter((item) => item.id !== id),
         })),
     }),
     {

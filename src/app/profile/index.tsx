@@ -3,23 +3,20 @@ import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import type { RelativePathString } from "expo-router";
 import { useState } from "react";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Switch,
-  Text,
-  View,
-} from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, Pressable, Switch, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ProfileAvatarPicker from "@/app/components/ProfileAvatarPicker";
 import SettingRow from "@/app/components/SettingRow";
 import UsernameInputField from "@/app/components/UsernameInputField";
+import { storage } from "@/services/storage";
+import { Button } from "@/shared/components/Button";
+import { AppText } from "@/shared/components/Text";
+import { useConversationStore } from "@/store/conversation-store";
 import { useProfileStore } from "@/store/profile-store";
 import { colors } from "@/theme/tokens";
 import { useStyles } from "@/theme/useStyles";
+import { ConfirmationModal } from "@/shared/components/ConfirmationModal";
 
 const usernamePattern = /^[a-zA-Z0-9._-]+$/;
 
@@ -31,13 +28,16 @@ export default function ProfileScreen() {
   const avatarUri = useProfileStore((state) => state.avatarUri);
   const notificationsEnabled = useProfileStore((state) => state.notificationsEnabled);
   const setProfile = useProfileStore((state) => state.setProfile);
+  const resetProfile = useProfileStore((state) => state.resetProfile);
   const setThemeMode = useProfileStore((state) => state.setThemeMode);
   const setNotificationsEnabled = useProfileStore((state) => state.setNotificationsEnabled);
   const hasHydrated = useProfileStore((state) => state.hasHydrated);
+  const clearConversations = useConversationStore((state) => state.clearConversations);
   const isOnboarding = onboarding === "true" || !username.trim();
   const [draftUsername, setDraftUsername] = useState(username);
   const [draftAvatarUri, setDraftAvatarUri] = useState(avatarUri);
   const [error, setError] = useState<string | null>(null);
+  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
 
   async function chooseAvatar() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -99,6 +99,18 @@ export default function ProfileScreen() {
     }
 
     router.replace("/conversations" as RelativePathString);
+  }
+
+  async function logout() {
+    setIsLogoutModalVisible(false);
+    await Promise.all([
+      storage.removeItem("chat-buddy-profile"),
+      storage.removeItem("chat-buddy-conversations"),
+    ]);
+    resetProfile();
+    clearConversations();
+    router.dismissAll();
+    router.replace({ pathname: "/profile", params: { onboarding: "true" } });
   }
 
   async function toggleNotifications(enabled: boolean) {
@@ -179,7 +191,6 @@ export default function ProfileScreen() {
       <View style={styles.content}>
         <ProfileAvatarPicker
           uri={draftAvatarUri}
-          username={draftUsername}
           onPress={() => void chooseAvatar()}
           styles={styles}
         />
@@ -245,9 +256,23 @@ export default function ProfileScreen() {
                 value={notificationsEnabled}
               />
             </SettingRow>
+            <Button
+              accessibilityRole="button"
+              accessibilityLabel="Log out"
+              onPress={() => setIsLogoutModalVisible(true)}
+              style={styles.logoutButton}
+            >
+              <AppText style={styles.logoutText}>Log out</AppText>
+            </Button>
           </View>
         ) : null}
       </View>
+      <ConfirmationModal
+        visible={isLogoutModalVisible}
+        message="This will clear your profile and chat history from this device. Do you want to log out?"
+        onCancel={() => setIsLogoutModalVisible(false)}
+        onConfirm={() => void logout()}
+      />
     </KeyboardAvoidingView>
   );
 }

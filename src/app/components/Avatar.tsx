@@ -1,41 +1,30 @@
 import { Image } from "expo-image";
-import {
-  ImageStyle,
-  StyleProp,
-  TextStyle,
-  View,
-  ViewStyle,
-  Text,
-} from "react-native";
+import { ImageStyle, StyleProp, View, ViewStyle } from "react-native";
+
+const noUserImage = require("../../../assets/images/no-user.png");
 
 type AvatarProps = {
-  initials: string;
-  color: string;
   uri?: string | null;
   online?: boolean;
   size?: number;
   containerStyle?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
-  textStyle?: StyleProp<TextStyle>;
   onlineStyle?: StyleProp<ViewStyle>;
 };
 
 export default function Avatar({
-  initials,
-  color,
   uri,
   online = false,
   size = 54,
   containerStyle,
   imageStyle,
-  textStyle,
   onlineStyle,
 }: AvatarProps) {
   const baseContainerStyle: ViewStyle = {
     width: size,
     height: size,
     borderRadius: size / 2,
-    backgroundColor: color,
+    backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
@@ -45,12 +34,6 @@ export default function Avatar({
     width: size,
     height: size,
     borderRadius: size / 2,
-  };
-
-  const baseTextStyle: TextStyle = {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "800",
   };
 
   const baseOnlineStyle: ViewStyle = {
@@ -67,11 +50,11 @@ export default function Avatar({
 
   return (
     <View style={[baseContainerStyle, containerStyle]}>
-      {uri ? (
-        <Image source={{ uri }} contentFit="cover" style={[baseImageStyle, imageStyle]} />
-      ) : (
-        <Text style={[baseTextStyle, textStyle]}>{initials}</Text>
-      )}
+      <Image
+        source={uri ? { uri } : noUserImage}
+        contentFit="cover"
+        style={[baseImageStyle, imageStyle]}
+      />
       {online ? <View style={[baseOnlineStyle, onlineStyle]} /> : null}
     </View>
   );

@@ -57,11 +57,3 @@ export const typography = {
   title: 34,
 } as const;
 
-export const icons = {
-  back: "‹",
-  add: "+",
-  close: "×",
-  search: "⌕",
-  send: "↑",
-  more: "•••",
-} as const;

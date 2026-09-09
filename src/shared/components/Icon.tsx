@@ -1,9 +1,10 @@
-import { Text, TextStyle } from "react-native";
+import MaterialIcons from "@react-native-vector-icons/material-icons";
+import type { ComponentProps } from "react";
 
-import { icons } from "@/theme/tokens";
+type IconProps = Omit<ComponentProps<typeof MaterialIcons>, "name"> & {
+  name: string;
+};
 
-type IconName = keyof typeof icons;
-
-export function Icon({ name, style }: { name: IconName; style?: TextStyle }) {
-  return <Text style={style}>{icons[name]}</Text>;
+export default function Icon({ name, ...props }: IconProps) {
+  return <MaterialIcons {...props} name={name as never} />;
 }

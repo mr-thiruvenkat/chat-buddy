@@ -6,6 +6,10 @@ export type Message = {
   sender: "me" | "them";
   createdAt: string;
   delivery: DeliveryState;
+  kind?: "text" | "image" | "document" | "audio";
+  attachmentUri?: string;
+  attachmentName?: string;
+  attachmentMimeType?: string;
 };
 
 export const initialMessages: Record<string, Message[]> = {

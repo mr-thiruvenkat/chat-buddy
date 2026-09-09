@@ -10,6 +10,7 @@ type ProfileState = {
   notificationsEnabled: boolean;
   hasHydrated: boolean;
   setProfile: (profile: { username: string; avatarUri: string | null }) => void;
+  resetProfile: () => void;
   setThemeMode: (mode: "light" | "dark") => void;
   setNotificationsEnabled: (enabled: boolean) => void;
   setHasHydrated: (value: boolean) => void;
@@ -24,6 +25,13 @@ export const useProfileStore = create<ProfileState>()(
       notificationsEnabled: false,
       hasHydrated: false,
       setProfile: (profile) => set(profile),
+      resetProfile: () =>
+        set({
+          username: "",
+          avatarUri: null,
+          themeMode: "light",
+          notificationsEnabled: false,
+        }),
       setThemeMode: (themeMode) => set({ themeMode }),
       setNotificationsEnabled: (notificationsEnabled) => set({ notificationsEnabled }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),

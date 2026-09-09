@@ -13,11 +13,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useConversationStore } from "@/store/conversation-store";
 import { useProfileStore } from "@/store/profile-store";
-import { colors, icons, spacing } from "@/theme/tokens";
+import { Button } from "@/shared/components/Button";
+import { AppText } from "@/shared/components/Text";
+import { colors, spacing } from "@/theme/tokens";
 import { useStyles } from "@/theme/useStyles";
 import Avatar from "../components/Avatar";
 import ConversationListItem from "../components/ConversationListItem";
-
+import Icon from "@/shared/components/Icon";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -84,19 +86,16 @@ export default function Home() {
           onPress={() => router.push("/profile" as never)}
         >
           <Avatar
-            initials={username[0] || "A"}
-            color={colors.textStrong}
             uri={avatarUri}
             size={40}
             containerStyle={styles.profileAvatar}
             imageStyle={styles.profileAvatar}
-            textStyle={styles.profileInitial}
           />
         </Pressable>
       </View>
 
       <View style={[styles.searchWrap, isDarkMode && styles.darkSearchWrap]}>
-        <Text style={styles.searchIcon}>{icons.search}</Text>
+        <Icon name="search" size={22} color={colors.textMuted} />
         <TextInput
           accessibilityLabel="Search conversations"
           placeholder="Search conversations"
@@ -112,15 +111,17 @@ export default function Home() {
             accessibilityLabel="Clear search"
             onPress={() => setQuery("")}
           >
-            <Text style={styles.clearSearch}>{icons.close}</Text>
+            <Icon name="close" size={22} color={colors.textMuted} />
           </Pressable>
         ) : null}
       </View>
 
-      <View style={styles.listHeader}>
-        <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Recent chats</Text>
-        <Text style={styles.count}>{filteredConversations.length}</Text>
-      </View>
+      {conversations?.length ? (
+        <View style={styles.listHeader}>
+          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Chats</Text>
+          <Text style={styles.count}>{filteredConversations.length}</Text>
+        </View>
+      ) : null}
 
       {loadError ? <Text style={styles.listErrorText}>{loadError}</Text> : null}
 
@@ -154,30 +155,43 @@ export default function Home() {
           )}
           ListEmptyComponent={
             <View style={styles.stateBox}>
-              <Text style={styles.emptyTitle}>
+              <Icon name="chat-bubble-outline" size={52} color={colors.primary} />
+              <AppText style={[styles.emptyTitle, isDarkMode && styles.darkText]}>
                 {query ? "No chats found" : "No conversations yet"}
-              </Text>
-              <Text style={styles.stateText}>
+              </AppText>
+              <AppText style={styles.stateText}>
                 {query
                   ? "Try a different name or message."
                   : "Your new conversations will appear here."}
-              </Text>
+              </AppText>
+              {!query ? (
+                <Button
+                  accessibilityRole="button"
+                  accessibilityLabel="Start a new chat"
+                  onPress={() => router.push("/conversations/new-chat" as never)}
+                  style={styles.emptyActionButton}
+                >
+                  <AppText style={styles.emptyActionText}>Start New Chat</AppText>
+                </Button>
+              ) : null}
             </View>
           }
         />
       )}
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Start a new chat"
-        onPress={() => router.push("/conversations/new-chat" as never)}
-        style={({ pressed }) => [
-          styles.newChatButton,
-          { bottom: Math.max(insets.bottom, spacing.medium) + spacing.small },
-          pressed && styles.conversationPressed,
-        ]}
-      >
-        <Text style={styles.newChatIcon}>{icons.add}</Text>
-      </Pressable>
+      {conversations?.length ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Start a new chat"
+          onPress={() => router.push("/conversations/new-chat" as never)}
+          style={({ pressed }) => [
+            styles.newChatButton,
+            { bottom: Math.max(insets.bottom, spacing.medium) + spacing.small },
+            pressed && styles.conversationPressed,
+          ]}
+        >
+          <Icon name="add" size={28} color={colors.white} />
+        </Pressable>
+      ) : null}
     </View>
   );
 }

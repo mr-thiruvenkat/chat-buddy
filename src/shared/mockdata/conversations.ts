@@ -2,7 +2,7 @@ export type Conversation = {
   id: string;
   name: string;
   username: string;
-  initials: string;
+  avatarUri?: string | null;
   color: string;
   preview: string;
   timestamp: string;
@@ -10,12 +10,13 @@ export type Conversation = {
   online: boolean;
 };
 
+export const developmentUsername = "maya.chen";
+
 export const initialConversations: Conversation[] = [
   {
     id: "maya",
     name: "Maya Chen",
     username: "maya.chen",
-    initials: "MC",
     color: "#D9A441",
     preview: "That sounds perfect. See you tomorrow!",
     timestamp: "9:42 AM",
@@ -26,7 +27,6 @@ export const initialConversations: Conversation[] = [
     id: "jordan",
     name: "Jordan Lee",
     username: "jordanlee",
-    initials: "JL",
     color: "#D66B58",
     preview: "I sent over the photos from the hike.",
     timestamp: "Yesterday",
@@ -37,7 +37,6 @@ export const initialConversations: Conversation[] = [
     id: "samira",
     name: "Samira Patel",
     username: "samira.p",
-    initials: "SP",
     color: "#6C8C73",
     preview: "Are we still on for coffee this week?",
     timestamp: "Mon",
@@ -48,7 +47,6 @@ export const initialConversations: Conversation[] = [
     id: "weekend-crew",
     name: "Weekend crew",
     username: "weekend-crew",
-    initials: "WC",
     color: "#6D78B5",
     preview: "Noah: I can bring the snacks.",
     timestamp: "Sun",

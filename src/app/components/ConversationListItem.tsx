@@ -25,21 +25,11 @@ export default function ConversationListItem({
       onPress={onPress}
       style={({ pressed }) => [styles.conversation, pressed && styles.conversationPressed]}
     >
-      <Avatar
-        initials={item.initials}
-        color={item.color}
-        online={item.online}
-        size={54}
-        textStyle={styles.avatarText}
-      />
+      <Avatar online={item.online} size={54} />
       <View style={styles.conversationBody}>
         <View style={styles.rowBetween}>
           <Text
-            style={[
-              styles.name,
-              isDark && styles.darkText,
-              item.unread > 0 && styles.unreadName,
-            ]}
+            style={[styles.name, isDark && styles.darkText, item.unread > 0 && styles.unreadName]}
           >
             {item.name}
           </Text>
